@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres40
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin321
+      POSTGRES_DB: job_applications
+    ports:
+      - "8001:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./Backend
+    container_name: Backend
+    restart: always
+    ports:
+      - "3159:3159"
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./Frontend
+    container_name: Frontend
+    ports:
+      - "8326:80"
+    restart: always
+
+  hr:
+    build: ./HR
+    container_name: HR
+    ports:
+      - "8327:80"
+    restart: always
+
+  view_offer:
+    build: ./View_offer
+    container_name: View_offer
+    ports:
+      - "8328:80"
+    restart: always
+
+volumes:
+  pgdata:
